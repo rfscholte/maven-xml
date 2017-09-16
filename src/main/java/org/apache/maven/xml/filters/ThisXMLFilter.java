@@ -11,12 +11,12 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * @author Robert Scholte
  *
  */
-public class ThisContentHandler
+public class ThisXMLFilter
     extends XMLFilterImpl
 {
     private final Function<String, String> resolver;
     
-    public ThisContentHandler( Function<String, String> resolver )
+    public ThisXMLFilter( Function<String, String> resolver )
     {
         this.resolver = resolver;
     }

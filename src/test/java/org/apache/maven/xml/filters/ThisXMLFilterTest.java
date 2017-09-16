@@ -24,9 +24,9 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.xml.sax.XMLFilter;
 
-public class ThisContentHandlerTest extends AbtractXMLFilterTests
+public class ThisXMLFilterTest extends AbtractXMLFilterTests
 {
-    private XMLFilter filter = new ThisContentHandler( t-> "THIS" );
+    private XMLFilter filter = new ThisXMLFilter( t-> "THIS" );
     
     @Test
     public void test() throws Exception
