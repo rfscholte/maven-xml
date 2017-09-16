@@ -30,6 +30,13 @@ public class ParentXMLFilter
 
     private int state;
 
+    /**
+     * If parent has no version-element, rewrite relativePath to version.<br>
+     * 
+     * If parent has version-element, then remove relativePath.<br>
+     * 
+     * Order of elements must stay the same.
+     */
     private boolean hasVersion;
 
     private List<SAXEvent> saxEvents = new ArrayList<>();
@@ -66,7 +73,6 @@ public class ParentXMLFilter
 
     @Override
     public void startElement( String uri, String localName, String qName, Attributes atts )
-        throws SAXException
     {
         if ( "relativePath".equals( localName ) )
         {
@@ -94,7 +100,6 @@ public class ParentXMLFilter
 
     @Override
     public void characters( char[] ch, int start, int length )
-        throws SAXException
     {
         if ( state == RELATIVEPATH )
         {
@@ -115,7 +120,6 @@ public class ParentXMLFilter
 
     @Override
     public void endDocument()
-        throws SAXException
     {
         addEvent( getEventFactory().endDocument() );
     }
@@ -149,21 +153,18 @@ public class ParentXMLFilter
 
     @Override
     public void endPrefixMapping( String prefix )
-        throws SAXException
     {
         addEvent( getEventFactory().endPrefixMapping( prefix ) );
     }
 
     @Override
     public void ignorableWhitespace( char[] ch, int start, int length )
-        throws SAXException
     {
         addEvent( getEventFactory().ignorableWhitespace( ch, start, length ) );
     }
 
     @Override
     public void processingInstruction( String target, String data )
-        throws SAXException
     {
         addEvent( getEventFactory().processingInstruction( target, data ) );
 
@@ -177,21 +178,18 @@ public class ParentXMLFilter
 
     @Override
     public void skippedEntity( String name )
-        throws SAXException
     {
         addEvent( getEventFactory().skippedEntity( name ) );
     }
 
     @Override
     public void startDocument()
-        throws SAXException
     {
         addEvent( getEventFactory().startDocument() );
     }
 
     @Override
     public void startPrefixMapping( String prefix, String uri )
-        throws SAXException
     {
         addEvent( getEventFactory().startPrefixMapping( prefix, uri ) );
     }

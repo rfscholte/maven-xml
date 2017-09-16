@@ -22,7 +22,6 @@ package org.apache.maven.xml;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
 
 public final class SAXEventFactory
 {
@@ -34,37 +33,31 @@ public final class SAXEventFactory
     }
 
     public SAXEvent characters( final char[] ch, final int start, final int length )
-        throws SAXException
     {
         return () -> contentHandler.characters( ch, start, length );
     }
 
     public SAXEvent endDocument()
-        throws SAXException
     {
         return () -> contentHandler.endDocument();
     }
 
     public SAXEvent endElement( final String uri, final String localName, final String qName )
-        throws SAXException
     {
         return () -> contentHandler.endElement( uri, localName, qName );
     }
 
     public SAXEvent endPrefixMapping( final String prefix )
-        throws SAXException
     {
         return () ->  contentHandler.endPrefixMapping( prefix );
     }
 
     public SAXEvent ignorableWhitespace( final char[] ch, final int start, final int length )
-        throws SAXException
     {
         return () ->  contentHandler.ignorableWhitespace( ch, start, length );
     }
 
     public SAXEvent processingInstruction( final String target, final String data )
-        throws SAXException
     {
         return () -> contentHandler.processingInstruction( target, data );
     }
@@ -75,25 +68,21 @@ public final class SAXEventFactory
     }
 
     public SAXEvent skippedEntity( final String name )
-        throws SAXException
     {
         return () -> contentHandler.skippedEntity( name );
     }
 
     public SAXEvent startDocument()
-        throws SAXException
     {
         return () -> contentHandler.startDocument();
     }
 
     public SAXEvent startElement( final String uri, final String localName, final String qName, final Attributes atts )
-        throws SAXException
     {
         return () -> contentHandler.startElement( uri, localName, qName, atts );
     }
 
     public SAXEvent startPrefixMapping( final String prefix, final String uri )
-        throws SAXException
     {
         return () -> contentHandler.startPrefixMapping( prefix, uri );
     }
