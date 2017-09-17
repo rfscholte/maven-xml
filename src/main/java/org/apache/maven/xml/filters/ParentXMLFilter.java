@@ -1,11 +1,31 @@
 package org.apache.maven.xml.filters;
 
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 import org.apache.maven.xml.SAXEvent;
 import org.apache.maven.xml.SAXEventFactory;
+import org.apache.maven.xml.SAXEventUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -18,7 +38,6 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * <strong>NOTE: </strong>The calling filter is responsible to only pass the parent-fragment
  * 
  * @author Robert Scholte
- *
  */
 public class ParentXMLFilter
     extends XMLFilterImpl
@@ -32,9 +51,7 @@ public class ParentXMLFilter
 
     /**
      * If parent has no version-element, rewrite relativePath to version.<br>
-     * 
      * If parent has version-element, then remove relativePath.<br>
-     * 
      * Order of elements must stay the same.
      */
     private boolean hasVersion;
@@ -42,9 +59,9 @@ public class ParentXMLFilter
     private List<SAXEvent> saxEvents = new ArrayList<>();
 
     private SAXEventFactory eventFactory;
-    
+
     private final Function<String, String> relativePathMapper;
-    
+
     public ParentXMLFilter( Function<String, String> relativePathMapper )
     {
         this.relativePathMapper = relativePathMapper;
@@ -62,7 +79,7 @@ public class ParentXMLFilter
     private void addEvent( final SAXEvent event )
     {
         final int eventState = state;
-        
+
         saxEvents.add( () -> {
             if ( !( eventState == RELATIVEPATH && hasVersion ) )
             {
@@ -77,13 +94,11 @@ public class ParentXMLFilter
         if ( "relativePath".equals( localName ) )
         {
             state = RELATIVEPATH;
-            addEvent( () ->
-            {
-                    String versionQName = qName.replaceFirst( "relativePath$", "version" );
+            addEvent( () -> {
+                String versionQName = SAXEventUtils.renameQName( qName, "version" );
 
-                    getEventFactory().startElement( uri, "version", versionQName, null ).execute();
-                }
-            );
+                getEventFactory().startElement( uri, "version", versionQName, null ).execute();
+            } );
             return;
         }
         else
@@ -103,8 +118,7 @@ public class ParentXMLFilter
     {
         if ( state == RELATIVEPATH )
         {
-            addEvent( () ->
-            {
+            addEvent( () -> {
                 String relativePath = new String( ch, start, length );
                 String version = relativePathToVersion( relativePath );
 
@@ -130,9 +144,8 @@ public class ParentXMLFilter
     {
         if ( "relativePath".equals( localName ) )
         {
-            addEvent( () ->
-            {
-                String versionQName = qName.replaceFirst( "relativePath$", "version" );
+            addEvent( () -> {
+                String versionQName = SAXEventUtils.renameQName( qName, "version" );
                 getEventFactory().endElement( uri, "version", versionQName ).execute();
             } );
         }
