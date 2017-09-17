@@ -55,6 +55,8 @@ public class ParentXMLFilter
      * Order of elements must stay the same.
      */
     private boolean hasVersion;
+    
+    private String resolvedVersion; 
 
     private List<SAXEvent> saxEvents = new ArrayList<>();
 
@@ -95,9 +97,16 @@ public class ParentXMLFilter
         {
             state = RELATIVEPATH;
             addEvent( () -> {
-                String versionQName = SAXEventUtils.renameQName( qName, "version" );
+                if ( resolvedVersion != null )
+                {
+                    String versionQName = SAXEventUtils.renameQName( qName, "version" );
 
-                getEventFactory().startElement( uri, "version", versionQName, null ).execute();
+                    getEventFactory().startElement( uri, "version", versionQName, null ).execute();
+                }
+                else
+                {
+                    getEventFactory().startElement( uri, localName, qName, atts ).execute();
+                }
             } );
             return;
         }
@@ -118,11 +127,18 @@ public class ParentXMLFilter
     {
         if ( state == RELATIVEPATH )
         {
-            addEvent( () -> {
-                String relativePath = new String( ch, start, length );
-                String version = relativePathToVersion( relativePath );
+            String relativePath = new String( ch, start, length );
+            resolvedVersion = relativePathToVersion( relativePath );
 
-                getEventFactory().characters( version.toCharArray(), 0, version.length() ).execute();
+            addEvent( () -> {
+                if ( resolvedVersion != null )
+                {
+                    getEventFactory().characters( resolvedVersion.toCharArray(), 0, resolvedVersion.length() ).execute();
+                }
+                else
+                {
+                    getEventFactory().characters( ch, start, length ).execute();
+                }
             } );
         }
         else
@@ -145,8 +161,15 @@ public class ParentXMLFilter
         if ( "relativePath".equals( localName ) )
         {
             addEvent( () -> {
-                String versionQName = SAXEventUtils.renameQName( qName, "version" );
-                getEventFactory().endElement( uri, "version", versionQName ).execute();
+                if ( resolvedVersion != null )
+                {
+                    String versionQName = SAXEventUtils.renameQName( qName, "version" );
+                    getEventFactory().endElement( uri, "version", versionQName ).execute();
+                }
+                else
+                {
+                    getEventFactory().endElement( uri, localName, qName ).execute();
+                }
             } );
         }
         else

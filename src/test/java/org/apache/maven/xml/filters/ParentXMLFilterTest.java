@@ -72,6 +72,23 @@ public class ParentXMLFilterTest extends AbtractXMLFilterTests
     }
 
     @Test
+    public void testInvalidRelativePath() throws Exception
+    {
+        XMLFilter filter = new ParentXMLFilter( r -> null );
+        
+        String input = "<parent>"
+            + "<groupId>GROUPID</groupId>"
+            + "<artifactId>ARTIFACTID</artifactId>"
+            + "<relativePath>RELATIVEPATH</relativePath>"
+            + "</parent>";
+        String expected = input;
+
+        String actual = transform( input, filter );
+
+        assertEquals( expected, actual );
+    }
+
+    @Test
     public void testRelativePathAndVersion() throws Exception
     {
         String input = "<parent>"
